@@ -9,8 +9,4 @@ module.exports = {
   resources:      ["stream" ],
   catalogs:       [],
   types:          ["movie", "series", "channel", "tv"],
-  behaviorHints:  {
-    configurable:           true,
-    configurationRequired:  true
-  }
 };
