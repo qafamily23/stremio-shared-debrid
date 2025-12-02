@@ -7,6 +7,7 @@ app.use(cors());  // Enable CORS
 
 // Manifest route
 app.get('/:authToken/:gistId/:username/manifest.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   res.json(manifest);
 });
 

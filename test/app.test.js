@@ -7,7 +7,7 @@ describe('Express Server', () => {
       const response = await request(app)
         .get('/test-token/ls12345/testuser/manifest.json')
         .expect(200)
-        .expect('Content-Type', /json/);
+        .expect('Content-Type', 'application/json; charset=utf-8');
 
       expect(response.body).toHaveProperty('id', 'com.github.anhkind');
       expect(response.body).toHaveProperty('name', 'Shared Debrid Notifier');
