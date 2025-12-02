@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Shared user notifier for Stremio",
   "author": "Anh Nguyen <anhkind@gmail.com>",
-  "main": "src/server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "node src/server.js -- --launch",
+    "start": "node index.js",
+    "dev": "node index.js -- --launch",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -27,6 +27,7 @@
     "stremio-addon-sdk": "^1.6.10"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "supertest": "^7.1.4"
   }
 }
