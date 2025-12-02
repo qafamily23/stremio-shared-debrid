@@ -31,4 +31,4 @@ build/Release
 node_modules
 
 *.ps1
-stremio-imdb-list
+subapps
