@@ -1,11 +1,13 @@
 const Gist = require('../src/gist');
 
-// Mock the https module
-jest.mock('https', () => ({
-  request: jest.fn()
+// Mock the @octokit/core module
+jest.mock('@octokit/core', () => ({
+  Octokit: jest.fn().mockImplementation(() => ({
+    request: jest.fn()
+  }))
 }));
 
-const https = require('https');
+const { Octokit } = require('@octokit/core');
 
 describe('Gist Class', () => {
   const mockToken = 'test-token';
@@ -17,255 +19,109 @@ describe('Gist Class', () => {
     gist = new Gist(mockToken, mockId);
   });
 
-  describe('constructor', () => {
-    it('should initialize with token and id', () => {
-      expect(gist.token).toBe(mockToken);
+  describe('Constructor', () => {
+    it('should initialize with token, id, and Octokit instance', () => {
       expect(gist.id).toBe(mockId);
-    });
-  });
-
-  describe('request method', () => {
-    it('should make a GET request without body', async () => {
-      const mockResponse = {
-        statusCode: 200,
-        on: jest.fn((event, callback) => {
-          if (event === 'data') {
-            callback('{"id": "test-gist-id"}');
-          }
-          if (event === 'end') {
-            callback();
-          }
-        })
-      };
-
-      const mockReq = {
-        on: jest.fn(),
-        write: jest.fn(),
-        end: jest.fn()
-      };
-
-      https.request.mockImplementation((url, options, callback) => {
-        callback(mockResponse);
-        return mockReq;
+      expect(gist.octokit).toBeDefined();
+      expect(Octokit).toHaveBeenCalledWith({
+        auth: mockToken
       });
-
-      const result = await gist.request('GET', '/gists/test-id');
-
-      expect(https.request).toHaveBeenCalledWith(
-        'https://api.github.com/gists/test-id',
-        expect.objectContaining({
-          method: 'GET',
-          headers: expect.objectContaining({
-            'Authorization': 'Bearer test-token',
-            'Accept': 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28'
-          })
-        }),
-        expect.any(Function)
-      );
-
-      expect(result).toEqual({ id: 'test-gist-id' });
-    });
-
-    it('should make a PATCH request with body', async () => {
-      const mockResponse = {
-        statusCode: 200,
-        on: jest.fn((event, callback) => {
-          if (event === 'data') {
-            callback('{"id": "test-gist-id", "updated": true}');
-          }
-          if (event === 'end') {
-            callback();
-          }
-        })
-      };
-
-      const mockReq = {
-        on: jest.fn(),
-        write: jest.fn(),
-        end: jest.fn()
-      };
-
-      https.request.mockImplementation((url, options, callback) => {
-        callback(mockResponse);
-        return mockReq;
-      });
-
-      const body = { description: 'Updated gist' };
-      const result = await gist.request('PATCH', '/gists/test-id', body);
-
-      expect(https.request).toHaveBeenCalledWith(
-        'https://api.github.com/gists/test-id',
-        expect.objectContaining({
-          method: 'PATCH',
-          headers: expect.objectContaining({
-            'Authorization': 'Bearer test-token',
-            'Accept': 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28',
-            'Content-Type': 'application/json'
-          })
-        }),
-        expect.any(Function)
-      );
-
-      expect(mockReq.write).toHaveBeenCalledWith(JSON.stringify(body));
-      expect(result).toEqual({ id: 'test-gist-id', updated: true });
-    });
-
-    it('should handle HTTP errors', async () => {
-      const mockResponse = {
-        statusCode: 404,
-        on: jest.fn((event, callback) => {
-          if (event === 'data') {
-            callback('Not Found');
-          }
-          if (event === 'end') {
-            callback();
-          }
-        })
-      };
-
-      const mockReq = {
-        on: jest.fn(),
-        write: jest.fn(),
-        end: jest.fn()
-      };
-
-      https.request.mockImplementation((url, options, callback) => {
-        callback(mockResponse);
-        return mockReq;
-      });
-
-      await expect(gist.request('GET', '/gists/not-found')).rejects.toThrow('HTTP 404: Not Found');
-    });
-
-    it('should handle network errors', async () => {
-      const mockReq = {
-        on: jest.fn((event, callback) => {
-          if (event === 'error') {
-            callback(new Error('Network error'));
-          }
-        }),
-        write: jest.fn(),
-        end: jest.fn()
-      };
-
-      https.request.mockReturnValue(mockReq);
-
-      await expect(gist.request('GET', '/gists/test-id')).rejects.toThrow('Network error');
-    });
-
-    it('should handle JSON parsing errors', async () => {
-      const mockResponse = {
-        statusCode: 200,
-        on: jest.fn((event, callback) => {
-          if (event === 'data') {
-            callback('invalid json');
-          }
-          if (event === 'end') {
-            callback();
-          }
-        })
-      };
-
-      const mockReq = {
-        on: jest.fn(),
-        write: jest.fn(),
-        end: jest.fn()
-      };
-
-      https.request.mockImplementation((url, options, callback) => {
-        callback(mockResponse);
-        return mockReq;
-      });
-
-      await expect(gist.request('GET', '/gists/test-id')).rejects.toThrow('Error parsing JSON response');
     });
   });
 
   describe('get method', () => {
-    it('should call request with GET method and correct path', async () => {
-      const mockResponse = {
+    it('should call request method with GET gist endpoint', async () => {
+      const mockResponseData = {
         id: mockId,
         files: { 'test.txt': { content: 'test content' } }
       };
 
-      jest.spyOn(gist, 'request').mockResolvedValue(mockResponse);
+      jest.spyOn(gist, 'request').mockResolvedValue(mockResponseData);
 
       const result = await gist.get();
 
-      expect(gist.request).toHaveBeenCalledWith('GET', `/gists/${mockId}`);
-      expect(result).toEqual(mockResponse);
+      expect(gist.request).toHaveBeenCalledWith('GET /gists/{gist_id}');
+      expect(result).toEqual(mockResponseData);
+    });
+
+    it('should handle request method errors', async () => {
+      const errorMessage = 'Gist not found';
+      jest.spyOn(gist, 'request').mockRejectedValue(new Error(errorMessage));
+
+      await expect(gist.get()).rejects.toThrow(errorMessage);
     });
   });
 
   describe('update method', () => {
-    it('should call request with PATCH method and correct body for string content', async () => {
-      const mockResponse = {
+    it('should call request method with PATCH gist endpoint and string content', async () => {
+      const mockResponseData = {
         id: mockId,
         updated: true
       };
 
-      jest.spyOn(gist, 'request').mockResolvedValue(mockResponse);
+      jest.spyOn(gist, 'request').mockResolvedValue(mockResponseData);
 
       const files = { 'test.txt': 'updated content' };
       const description = 'Updated description';
 
-      await gist.update(files, description);
+      const result = await gist.update(files, description);
 
-      expect(gist.request).toHaveBeenCalledWith('PATCH', `/gists/${mockId}`, {
+      expect(gist.request).toHaveBeenCalledWith('PATCH /gists/{gist_id}', {
         description: 'Updated description',
         files: {
           'test.txt': { content: 'updated content' }
         }
       });
+      expect(result).toEqual(mockResponseData);
     });
 
-    it('should call request with PATCH method and correct body for object content', async () => {
-      const mockResponse = {
+    it('should call request method with PATCH gist endpoint and object content', async () => {
+      const mockResponseData = {
         id: mockId,
         updated: true
       };
 
-      jest.spyOn(gist, 'request').mockResolvedValue(mockResponse);
+      jest.spyOn(gist, 'request').mockResolvedValue(mockResponseData);
 
       const files = { 'test.txt': { content: 'updated content' } };
 
-      await gist.update(files);
+      const result = await gist.update(files);
 
-      expect(gist.request).toHaveBeenCalledWith('PATCH', `/gists/${mockId}`, {
+      expect(gist.request).toHaveBeenCalledWith('PATCH /gists/{gist_id}', {
         files: {
           'test.txt': { content: 'updated content' }
         }
       });
+      expect(result).toEqual(mockResponseData);
     });
 
-    it('should call request with PATCH method without description when not provided', async () => {
-      const mockResponse = {
+    it('should call request method without description when not provided', async () => {
+      const mockResponseData = {
         id: mockId,
         updated: true
       };
 
-      jest.spyOn(gist, 'request').mockResolvedValue(mockResponse);
+      jest.spyOn(gist, 'request').mockResolvedValue(mockResponseData);
 
       const files = { 'test.txt': 'updated content' };
 
-      await gist.update(files);
+      const result = await gist.update(files);
 
-      expect(gist.request).toHaveBeenCalledWith('PATCH', `/gists/${mockId}`, {
+      expect(gist.request).toHaveBeenCalledWith('PATCH /gists/{gist_id}', {
         files: {
           'test.txt': { content: 'updated content' }
         }
       });
+      expect(result).toEqual(mockResponseData);
     });
 
     it('should handle different content types by converting to string', async () => {
-      const mockResponse = {
+      const mockResponseData = {
         id: mockId,
         updated: true
       };
 
-      jest.spyOn(gist, 'request').mockResolvedValue(mockResponse);
+      jest.spyOn(gist, 'request').mockResolvedValue(mockResponseData);
 
       const files = {
         'number.txt': 123,
@@ -273,15 +129,25 @@ describe('Gist Class', () => {
         'object.txt': { nested: 'value' }
       };
 
-      await gist.update(files);
+      const result = await gist.update(files);
 
-      expect(gist.request).toHaveBeenCalledWith('PATCH', `/gists/${mockId}`, {
+      expect(gist.request).toHaveBeenCalledWith('PATCH /gists/{gist_id}', {
         files: {
           'number.txt': { content: '123' },
           'boolean.txt': { content: 'true' },
           'object.txt': { content: '[object Object]' }
         }
       });
+      expect(result).toEqual(mockResponseData);
+    });
+
+    it('should handle request method errors', async () => {
+      const errorMessage = 'Update failed';
+      jest.spyOn(gist, 'request').mockRejectedValue(new Error(errorMessage));
+
+      const files = { 'test.txt': 'content' };
+
+      await expect(gist.update(files)).rejects.toThrow(errorMessage);
     });
   });
 });
