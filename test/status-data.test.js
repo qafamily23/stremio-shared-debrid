@@ -27,11 +27,12 @@ describe('StatusData Class', () => {
       expect(statusData.accessedAt.toISOString()).toBe(new Date(accessedAt).toISOString());
     });
 
-    it('should initialize with username and current date when accessedAt is null', () => {
+    it('should initialize with username and null accessedAt', () => {
       const username = 'test-user';
       statusData = new StatusData(username, null);
 
       expect(statusData.username).toBe(username);
+      // null is treated as object (typeof null === 'object'), so it uses the default
       expect(statusData.accessedAt).toBeInstanceOf(Date);
       expect(statusData.accessedAt.toISOString()).toBe(new Date('1970-01-01').toISOString());
     });
@@ -48,20 +49,29 @@ describe('StatusData Class', () => {
       expect(statusData.accessedAt.getDate()).toBe(25);
     });
 
-    it('should throw error when username is not provided', () => {
-      expect(() => new StatusData()).toThrow('username can not be empty');
+    it('should use default username when not provided', () => {
+      const statusData = new StatusData();
+      expect(statusData.username).toBe('grandma');
     });
 
-    it('should throw error when username is null', () => {
-      expect(() => new StatusData(null)).toThrow('username can not be empty');
+    it('should use provided username instead of default', () => {
+      const statusData = new StatusData('custom-user');
+      expect(statusData.username).toBe('custom-user');
     });
 
-    it('should throw error when username is undefined', () => {
-      expect(() => new StatusData(undefined)).toThrow('username can not be empty');
+    it('should use null username when explicitly provided', () => {
+      const statusData = new StatusData(null);
+      expect(statusData.username).toBe(null);
     });
 
-    it('should throw error when username is empty string', () => {
-      expect(() => new StatusData('')).toThrow('username can not be empty');
+    it('should use undefined username when explicitly provided', () => {
+      const statusData = new StatusData(undefined);
+      expect(statusData.username).toBe('grandma'); // undefined will use default
+    });
+
+    it('should accept empty string username', () => {
+      const statusData = new StatusData('');
+      expect(statusData.username).toBe('');
     });
 
     it('should handle numeric username (even though not typical)', () => {
@@ -81,14 +91,14 @@ describe('StatusData Class', () => {
     });
   });
 
-  describe('refresh method', () => {
+  describe('accessNow method', () => {
     beforeEach(() => {
       statusData = new StatusData('test-user', '2023-01-01T00:00:00Z');
     });
 
     it('should update accessedAt to current date', () => {
       const beforeRefresh = new Date();
-      statusData.refresh();
+      statusData.accessNow();
       const afterRefresh = new Date();
 
       expect(statusData.accessedAt).toBeInstanceOf(Date);
@@ -96,21 +106,21 @@ describe('StatusData Class', () => {
       expect(statusData.accessedAt.getTime()).toBeLessThanOrEqual(afterRefresh.getTime());
     });
 
-    it('should keep username unchanged when refreshing', () => {
+    it('should keep username unchanged when accessing now', () => {
       const originalUsername = statusData.username;
-      statusData.refresh();
+      statusData.accessNow();
 
       expect(statusData.username).toBe(originalUsername);
     });
 
     it('should work multiple times in succession', () => {
       const firstRefresh = new Date();
-      statusData.refresh();
+      statusData.accessNow();
 
       // Wait a small amount to ensure different timestamps
       setTimeout(() => {
         const secondRefresh = new Date();
-        statusData.refresh();
+        statusData.accessNow();
 
         expect(statusData.accessedAt.getTime()).toBeGreaterThan(firstRefresh.getTime());
         expect(statusData.accessedAt.getTime()).toBeGreaterThanOrEqual(secondRefresh.getTime());
@@ -144,9 +154,9 @@ describe('StatusData Class', () => {
       expect(statusData.accessedAt).toBeInstanceOf(Date);
     });
 
-    it('should work correctly after refresh is called', () => {
+    it('should work correctly after accessNow is called', () => {
       const beforeRefresh = new Date();
-      statusData.refresh();
+      statusData.accessNow();
       const afterRefresh = new Date();
 
       const result = statusData.toObject();
@@ -283,14 +293,14 @@ describe('StatusData Class', () => {
       expect(statusData.canAccess(false, 60)).toBe(true);
     });
 
-    it('should work correctly after refresh is called', () => {
+    it('should work correctly after accessNow is called', () => {
       const statusData = new StatusData('original-user', '2023-06-15T10:00:00Z');
 
       // Initially session should be expired for 1 hour session
       expect(statusData.canAccess('different-user', 60)).toBe(true);
 
       // Refresh to current time
-      statusData.refresh();
+      statusData.accessNow();
 
       // Now session should be valid
       expect(statusData.canAccess('different-user', 60)).toBe(false);
@@ -386,10 +396,10 @@ describe('StatusData Class', () => {
 
       // Refresh
       const beforeRefresh = new Date();
-      statusData.refresh();
+      statusData.accessNow();
       const afterRefresh = new Date();
 
-      // Verify refresh worked
+      // Verify accessNow worked
       expect(statusData.username).toBe('lifecycle-user');
       expect(statusData.accessedAt.getTime()).toBeGreaterThanOrEqual(beforeRefresh.getTime());
       expect(statusData.accessedAt.getTime()).toBeLessThanOrEqual(afterRefresh.getTime());
@@ -399,10 +409,10 @@ describe('StatusData Class', () => {
       expect(objectData.username).toBe('lifecycle-user');
       expect(typeof objectData.accessedAt).toBe('string');
 
-      // Verify the refreshed timestamp
-      const refreshedDate = new Date(objectData.accessedAt);
-      expect(refreshedDate.getTime()).toBeGreaterThanOrEqual(beforeRefresh.getTime());
-      expect(refreshedDate.getTime()).toBeLessThanOrEqual(afterRefresh.getTime());
+      // Verify the accessNowed timestamp
+      const accessNowedDate = new Date(objectData.accessedAt);
+      expect(accessNowedDate.getTime()).toBeGreaterThanOrEqual(beforeRefresh.getTime());
+      expect(accessNowedDate.getTime()).toBeLessThanOrEqual(afterRefresh.getTime());
     });
   });
 });
