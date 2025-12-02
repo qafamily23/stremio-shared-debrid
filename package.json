@@ -4,5 +4,8 @@
   "description": "Shared user notifier for Stremio",
   "main": "index.js",
   "author": "Anh Nguyen <anhkind@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "stremio-addon-sdk": "^1.6.10"
+  }
 }
