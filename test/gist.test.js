@@ -53,7 +53,7 @@ describe('Gist Class', () => {
   });
 
   describe('update method', () => {
-    it('should call request method with PATCH gist endpoint and string content', async () => {
+    it('should call request method with PATCH gist endpoint and provided data', async () => {
       const mockResponseData = {
         id: mockId,
         updated: true
@@ -61,83 +61,16 @@ describe('Gist Class', () => {
 
       jest.spyOn(gist, 'request').mockResolvedValue(mockResponseData);
 
-      const files = { 'test.txt': 'updated content' };
-      const description = 'Updated description';
-
-      const result = await gist.update(files, description);
-
-      expect(gist.request).toHaveBeenCalledWith('PATCH /gists/{gist_id}', {
+      const updateData = {
         description: 'Updated description',
         files: {
           'test.txt': { content: 'updated content' }
         }
-      });
-      expect(result).toEqual(mockResponseData);
-    });
-
-    it('should call request method with PATCH gist endpoint and object content', async () => {
-      const mockResponseData = {
-        id: mockId,
-        updated: true
       };
 
-      jest.spyOn(gist, 'request').mockResolvedValue(mockResponseData);
+      const result = await gist.update(updateData);
 
-      const files = { 'test.txt': { content: 'updated content' } };
-
-      const result = await gist.update(files);
-
-      expect(gist.request).toHaveBeenCalledWith('PATCH /gists/{gist_id}', {
-        files: {
-          'test.txt': { content: 'updated content' }
-        }
-      });
-      expect(result).toEqual(mockResponseData);
-    });
-
-    it('should call request method without description when not provided', async () => {
-      const mockResponseData = {
-        id: mockId,
-        updated: true
-      };
-
-      jest.spyOn(gist, 'request').mockResolvedValue(mockResponseData);
-
-      const files = { 'test.txt': 'updated content' };
-
-      const result = await gist.update(files);
-
-      expect(gist.request).toHaveBeenCalledWith('PATCH /gists/{gist_id}', {
-        files: {
-          'test.txt': { content: 'updated content' }
-        }
-      });
-      expect(result).toEqual(mockResponseData);
-    });
-
-    it('should handle different content types by converting to string', async () => {
-      const mockResponseData = {
-        id: mockId,
-        updated: true
-      };
-
-      jest.spyOn(gist, 'request').mockResolvedValue(mockResponseData);
-
-      const files = {
-        'number.txt': 123,
-        'boolean.txt': true,
-        'object.txt': { nested: 'value' }
-      };
-
-      const result = await gist.update(files);
-
-      expect(gist.request).toHaveBeenCalledWith('PATCH /gists/{gist_id}', {
-        files: {
-          'number.txt': { content: '123' },
-          'boolean.txt': { content: 'true' },
-          'object.txt': { content: '[object Object]' }
-        }
-      });
+      expect(gist.request).toHaveBeenCalledWith('PATCH /gists/{gist_id}', updateData);
       expect(result).toEqual(mockResponseData);
     });
 
@@ -145,9 +78,65 @@ describe('Gist Class', () => {
       const errorMessage = 'Update failed';
       jest.spyOn(gist, 'request').mockRejectedValue(new Error(errorMessage));
 
-      const files = { 'test.txt': 'content' };
+      const updateData = { files: { 'test.txt': { content: 'content' } } };
 
-      await expect(gist.update(files)).rejects.toThrow(errorMessage);
+      await expect(gist.update(updateData)).rejects.toThrow(errorMessage);
+    });
+  });
+
+  describe('updateContent method', () => {
+    it('should call update method with single file content', async () => {
+      const mockResponseData = {
+        id: mockId,
+        updated: true
+      };
+
+      jest.spyOn(gist, 'update').mockResolvedValue(mockResponseData);
+
+      const result = await gist.updateContent('test.txt', 'new content');
+
+      expect(gist.update).toHaveBeenCalledWith({
+        files: {
+          'test.txt': { content: 'new content' }
+        }
+      });
+      expect(result).toEqual(mockResponseData);
+    });
+
+    it('should handle different types of content by converting to string', async () => {
+      const mockResponseData = {
+        id: mockId,
+        updated: true
+      };
+
+      jest.spyOn(gist, 'update').mockResolvedValue(mockResponseData);
+
+      await gist.updateContent('number.txt', 123);
+      await gist.updateContent('boolean.txt', true);
+      await gist.updateContent('object.txt', { key: 'value' });
+
+      expect(gist.update).toHaveBeenNthCalledWith(1, {
+        files: {
+          'number.txt': { content: 123 }
+        }
+      });
+      expect(gist.update).toHaveBeenNthCalledWith(2, {
+        files: {
+          'boolean.txt': { content: true }
+        }
+      });
+      expect(gist.update).toHaveBeenNthCalledWith(3, {
+        files: {
+          'object.txt': { content: { key: 'value' } }
+        }
+      });
+    });
+
+    it('should handle update method errors', async () => {
+      const errorMessage = 'Update content failed';
+      jest.spyOn(gist, 'update').mockRejectedValue(new Error(errorMessage));
+
+      await expect(gist.updateContent('test.txt', 'content')).rejects.toThrow(errorMessage);
     });
   });
 

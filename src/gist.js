@@ -28,27 +28,21 @@ class Gist {
     return this.request('GET /gists/{gist_id}');
   }
 
+  async update(data = {}) {
+    return this.request('PATCH /gists/{gist_id}', data);
+  }
+
   async getContent(fileName) {
     const gist = await this.get();
     return gist.files && gist.files[fileName] ? gist.files[fileName].content : '';
   }
 
-  async update(files, description) {
-    const data = {
-      files: {}
-    };
-
-    if (description !== undefined) {
-      data.description = description;
-    }
-
-    for (const [filename, content] of Object.entries(files)) {
-      data.files[filename] = typeof content === 'string'
-        ? { content }
-        : { content: content?.content || String(content) };
-    }
-
-    return this.request('PATCH /gists/{gist_id}', data);
+  async updateContent(fileName, content) {
+    return this.update({
+      files: {
+        [fileName]: { content }
+      }
+    });
   }
 }
 
