@@ -1,10 +1,23 @@
 {
-  "name": "aaa",
+  "name": "stremio-aaa",
   "version": "1.0.0",
   "description": "Shared user notifier for Stremio",
-  "main": "index.js",
   "author": "Anh Nguyen <anhkind@gmail.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url":  "https://github.com/anhkind/stremio-aaa"
+  },
+  "keywords": [
+    "stremio",
+    "stremio-addons",
+    "addons"
+  ],
   "license": "MIT",
+  "homepage": "https://github.com/anhkind/stremio-aaa",
   "dependencies": {
     "stremio-addon-sdk": "^1.6.10"
   }
