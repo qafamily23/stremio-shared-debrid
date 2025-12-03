@@ -1,4 +1,4 @@
-## Shared Debrid Notifier for Stremio streams
+## Stremio Shared Debrid
 ### Deployment
 This repo is ready for deploy to any hosting service but For simplicity, let's pick Vercel.
 
