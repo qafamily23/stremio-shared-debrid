@@ -8,13 +8,6 @@ jest.mock('../src/gist');
 // Mock the StatusData class
 jest.mock('../src/status-data');
 
-// Mock the @octokit/core module
-jest.mock('@octokit/core', () => ({
-  Octokit: jest.fn().mockImplementation(() => ({
-    request: jest.fn()
-  }))
-}));
-
 describe('Status Class', () => {
   const mockToken = 'test-token';
   const mockId = 'test-gist-id';

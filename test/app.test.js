@@ -2,13 +2,6 @@ const request = require('supertest');
 const app = require('../src/app');
 const Status = require('../src/status');
 
-// Mock @octokit/core to prevent actual API calls
-jest.mock('@octokit/core', () => ({
-  Octokit: jest.fn().mockImplementation(() => ({
-    request: jest.fn()
-  }))
-}));
-
 jest.mock('../src/status');
 
 describe('Express Server', () => {
