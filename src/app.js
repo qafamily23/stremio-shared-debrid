@@ -1,15 +1,22 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const manifest = require('./manifest');
 const Status = require("./status");
 
 const app = express();
 app.use(cors());  // Enable CORS
+app.use(express.static('public'));  // Serve static files from public directory
 
 const respond = (res, data) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(data)
 }
+
+// Configuration route
+app.get('/configure', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'configure', 'index.html'));
+});
 
 // Manifest route
 app.get('/:authToken/:gistId/:username/manifest.json', (req, res) => {

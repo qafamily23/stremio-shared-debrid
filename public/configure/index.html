@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Debrid - Configure</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shared Debrid Configuration</h1>
+        <p>Configure your Stremio Shared Debrid addon settings.</p>
+
+        <form id="configureForm">
+            <div class="form-group">
+                <label for="authToken">GitHub API Token:</label>
+                <input type="password" id="authToken" name="authToken" placeholder="Enter your GitHub personal access token">
+            </div>
+
+            <div class="form-group">
+                <label for="gistId">Gist ID:</label>
+                <input type="text" id="gistId" name="gistId" placeholder="Enter the Gist ID containing your configuration">
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username">
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Notes (optional):</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Any additional notes or comments"></textarea>
+            </div>
+
+            <button type="submit">Save Configuration</button>
+        </form>
+
+        <div class="note">
+            <strong>Note:</strong> Your GitHub token should have permissions to access and modify gists.
+            Keep your token secure and never share it publicly.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('configureForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {
+                authToken: document.getElementById('authToken').value,
+                gistId: document.getElementById('gistId').value,
+                username: document.getElementById('username').value,
+                notes: document.getElementById('notes').value
+            };
+
+            console.log('Configuration data:', formData);
+            alert('Configuration saved! (This is a demo - actual saving functionality would be implemented here)');
+        });
+    </script>
+</body>
+</html>
