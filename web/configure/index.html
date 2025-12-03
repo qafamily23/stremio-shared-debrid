@@ -55,6 +55,14 @@
             background-color: #0056b3;
             text-decoration: none;
         }
+        .hint {
+            font-size: 0.75em;
+            margin-top: 5px;
+        }
+        .highlight {
+            display: inline-block;
+            background-color: #fff3cd;
+        }
         .note {
             background-color: #fff3cd;
             border: 1px solid #ffeaa7;
@@ -92,26 +100,24 @@
         <form id="configureForm">
             <div class="form-group">
                 <label for="authToken">GitHub API Token:</label>
-                <input type="password" id="authToken" name="authToken" placeholder="Enter your GitHub personal access token">
+                <input type="password" id="authToken" name="authToken">
+                <p class="hint">The API token should have permissions to access and modify gists.</p>
             </div>
 
             <div class="form-group">
                 <label for="gistId">Gist ID:</label>
-                <input type="text" id="gistId" name="gistId" placeholder="Enter the Gist ID containing your configuration">
+                <input type="text" id="gistId" name="gistId">
+                <p class="hint">Example: https://gist.github.com/abcxyz/<span class="highlight">123456abcdef123456abcdef</span></p>
             </div>
 
             <div class="form-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username, name or anything to identify you">
+                <input type="text" id="username" name="username">
+                <p class="hint">Enter your username, name, location or anything to identify you</p>
             </div>
 
             <a href="#" class="install-btn" id="installBtn">Install</a>
         </form>
-
-        <div class="note">
-            <strong>Note:</strong> Your GitHub token should have permissions to access and modify gists.
-            Keep your token secure and never share it publicly.
-        </div>
 
         <a href="https://github.com/anhkind/stremio-shared-debrid" class="github-link" target="_blank" rel="noopener noreferrer">
             <svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true">
