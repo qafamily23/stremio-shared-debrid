@@ -47,3 +47,8 @@ and there will be no waring/notification.
     Shared Debrid
     DANGER! ${other username} is accessing!
     ```     
+
+#### Why is the "DANGER!" warning above not displayed on top but somewhere in the middle of the stream list?
+From our testing, it seems that the addon that was installed first will be displayed closer to the top of the stream list. 
+So, to make warning displayed on top, just try to uninstall the debrid addons (Torrentio?), install this addon, 
+then install the debrid addons again.
