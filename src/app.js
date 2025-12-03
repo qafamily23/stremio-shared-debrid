@@ -13,6 +13,11 @@ const respond = (res, data) => {
   res.send(data)
 }
 
+// Root redirect to configure
+app.get('/', (req, res) => {
+  res.redirect('/configure');
+});
+
 // Configuration route
 app.get('/configure', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'web', 'configure', 'index.html'));
@@ -23,6 +28,7 @@ app.get('/:authToken/:gistId/:username/manifest.json', (req, res) => {
   respond(res, manifest);
 });
 
+// Stream route
 app.get('/:authToken/:gistId/:username/stream/:type/:id.json', async (req, res) => {
   const { authToken, gistId, username } = req.params;
 
