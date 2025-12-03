@@ -26,7 +26,7 @@ Actually can be anything just to identify you from others.
 
 ### FAQ
 
-#### Why Gist?
+#### _Why Gist?_
 We need a place to store the access time of the latest user for the share debrid. With Gist,
 we have it free and the Github Rest API is simply to use.
 
@@ -38,7 +38,8 @@ We will have this data under `shared-debrid.json` file of the gist like this:
 }
 ```
 
-#### How do we know if the other user is actually using debrid service?
+#### _How do we know if the other user is actually using debrid service?_
+
 We don't know! We only keep their last access time whenever they're about to open a debrid stream.
 - If the last access time is 3hrs ago or sooner, we assume that they have completed their streaming session,
 and there will be no waring/notification. 
@@ -48,7 +49,7 @@ and there will be no waring/notification.
     DANGER! ${other username} is accessing!
     ```     
 
-#### Why is the "DANGER!" warning above not displayed on top but somewhere in the middle of the stream list?
+#### _Why is the "DANGER!" warning above not displayed on top but somewhere in the middle of the stream list?_
 From our testing, it seems that the addon that was installed first will be displayed closer to the top of the stream list. 
 So, to make warning displayed on top, just try to uninstall the debrid addons (Torrentio?), install this addon, 
 then install the debrid addons again.
