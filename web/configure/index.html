@@ -89,6 +89,11 @@
     </div>
 
     <script>
+        // Function to build the manifest URL
+        function buildUrl(authToken, gistId, username) {
+            return `${window.location.origin}/${authToken}/${gistId}/${username}/manifest.json`;
+        }
+
         document.getElementById('configureForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -98,8 +103,10 @@
                 username:   document.getElementById('username').value,
             };
 
-            console.log('Configuration data:', formData);
-            alert('Configuration saved! (This is a demo - actual saving functionality would be implemented here)');
+            // Build and display the manifest URL
+            const manifestUrl = buildUrl(formData.authToken, formData.gistId, formData.username);
+            const installUrl = manifestUrl.replace(/https?/, 'stremio') ;
+            console.log('Install URL:', installUrl);
         });
     </script>
 </body>
