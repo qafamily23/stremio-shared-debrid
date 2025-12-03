@@ -35,6 +35,7 @@ class Gist {
       headers: {
         'Authorization':        `Bearer ${this.token}`,
         'Accept':               'application/vnd.github+json',
+        'User-Agent':           'Stremio Shared Debrid',
         'X-GitHub-Api-Version': '2022-11-28',
         ...(data && {
           'Content-Type': 'application/json',
