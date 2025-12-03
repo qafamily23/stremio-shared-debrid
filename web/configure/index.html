@@ -37,7 +37,7 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
-        button {
+        button, .install-btn {
             background-color: #007bff;
             color: white;
             padding: 10px 20px;
@@ -45,9 +45,12 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
         }
-        button:hover {
+        button:hover, .install-btn:hover {
             background-color: #0056b3;
+            text-decoration: none;
         }
         .note {
             background-color: #fff3cd;
@@ -79,7 +82,7 @@
                 <input type="text" id="username" name="username" placeholder="Enter your username, name or anything to identify you">
             </div>
 
-            <button type="submit">Save Configuration</button>
+            <a href="#" class="install-btn" id="installBtn">Install</a>
         </form>
 
         <div class="note">
@@ -91,23 +94,28 @@
     <script>
         // Function to build the manifest URL
         function buildInstallUrl(authToken, gistId, username) {
-            const manifestUrl = `${window.location.origin}/${authToken}/${gistId}/${username}/manifest.json`;
+            const manifestUrl = encodeURI(`${window.location.origin}/${authToken}/${gistId}/${username}/manifest.json`);
             return manifestUrl.replace(/https?/, 'stremio');
         }
 
-        document.getElementById('configureForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Function to update install button href
+        function updateInstallUrl() {
+            const authToken = document.getElementById('authToken').value?.trim();
+            const gistId    = document.getElementById('gistId'   ).value?.trim();
+            const username  = document.getElementById('username' ).value?.trim();
 
-            const formData = {
-                authToken:  document.getElementById('authToken').value,
-                gistId:     document.getElementById('gistId').value,
-                username:   document.getElementById('username').value,
-            };
+            // Only update if all fields are filled
+            if (authToken && gistId && username) {
+                document.getElementById('installBtn').href = buildInstallUrl(authToken, gistId, username);
+            } else {
+                document.getElementById('installBtn').href = '#';
+            }
+        }
 
-            // Build and display the manifest URL
-            const installUrl = buildInstallUrl(formData.authToken, formData.gistId, formData.username);
-            console.log('Install URL:', installUrl);
-        });
+        // Add event listeners to all input fields
+        document.getElementById('authToken').addEventListener('input', updateInstallUrl);
+        document.getElementById('gistId'   ).addEventListener('input', updateInstallUrl);
+        document.getElementById('username' ).addEventListener('input', updateInstallUrl);
     </script>
 </body>
 </html>
