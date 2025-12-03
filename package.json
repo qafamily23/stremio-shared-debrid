@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Shared user notifier for Stremio",
   "author": "Anh Nguyen <anhkind@gmail.com>",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node server.js",
     "test": "jest",
     "test:watch": "jest --watch"
   },
