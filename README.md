@@ -1,5 +1,4 @@
 ## Shared Debrid Notifier for Stremio streams
-
 ### Deployment
 This repo is ready for deploy to any hosting service but For simplicity, let's pick Vercel.
 
@@ -8,6 +7,8 @@ This repo is ready for deploy to any hosting service but For simplicity, let's p
 - Select the forked repo and deploy
 
 ### Configure
+![Configure](https://raw.githubusercontent.com/anhkind/stremio-shared-debrid/master/images/configure.png "Configure")
+
 #### Github API token
 - Create new Github account and verify email, if needed
 - Generate a personal access token [https://github.com/settings/personal-access-tokens](https://github.com/settings/personal-access-tokens), 
