@@ -1,10 +1,7 @@
 ## Stremio Shared Debrid
-### Deployment
-This repo is ready for deploy to any hosting service but For simplicity, let's pick Vercel.
 
-- Fork this Github repo
-- Signup/Login on Vercel and connect to Github
-- Select the forked repo and deploy
+### Disclaimer
+_This addon is provided as-is, without any warranties or guarantees of any kind. It does not collect, store, or transmit any personal data. Use this addon entirely at your own risk._
 
 ### Configure
 ![Configure](https://raw.githubusercontent.com/anhkind/stremio-shared-debrid/master/images/configure.png "Configure")
@@ -49,7 +46,19 @@ and there will be no waring/notification.
     DANGER! ${other username} is accessing!
     ```     
 
+#### _Does the addon block/lock the streams when the warning is shown?_
+The addon **does NOT block/lock anything** as its just tries to give warning when the debrid service _might_ be used by others. 
+If we're confident that the debrid service is NOT being used, we can just ignore the warning and select streams like normal.  
+
 #### _Why is the "DANGER!" warning above not displayed on top but somewhere in the middle of the stream list?_
 From our testing, it seems that the addon that was installed first will be displayed closer to the top of the stream list. 
-So, to make warning displayed on top, just try to uninstall the debrid addons (Torrentio?), install this addon, 
-then install the debrid addons again.
+- _Manually_, to make warning displayed on top, just try to uninstall the debrid addons (Torrentio?), install this addon, 
+then install the debrid addons again, OR
+- Use any Addon manager to change the order of the installed addons.
+
+### Self-host 
+This repo is ready for deploy to any hosting service but For simplicity, let's pick Vercel.
+
+- Fork this Github repo
+- Signup/Login on Vercel and connect to Github
+- Select the forked repo and deploy
