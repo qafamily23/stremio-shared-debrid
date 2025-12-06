@@ -1,3 +1,4 @@
+const DEFAULT_TIMESTAMP       = '1970-01-01';
 const DEFAULT_SESSION_MINUTES = 180;
 
 class StatusData {
@@ -18,7 +19,7 @@ class StatusData {
   }
 
   accessFor(sessionMinutes, startedAt = new Date()) {
-    sessionMinutes = typeof sessionMinutes == 'number' ? Math.max(0, Math.round(sessionMinutes)) : DEFAULT_SESSION_MINUTES;
+    sessionMinutes = this._parseNumeric(sessionMinutes);
     this.endedAt   = new Date(startedAt.getTime() + sessionMinutes * 60 * 1000);
   }
 
@@ -29,9 +30,18 @@ class StatusData {
     }
   }
 
-  _parseDate(timestamp, defaultValue = '1970-01-01') {
-    const date = new Date(timestamp);
+  _parseDate(value, defaultValue = DEFAULT_TIMESTAMP) {
+    const date = new Date(value);
     return isNaN(date.valueOf()) ? new Date(defaultValue) : date;
+  }
+
+  _parseNumeric(value, defaultValue = DEFAULT_SESSION_MINUTES) {
+    if (typeof value === 'number') return Math.max(0, value);
+    if (typeof value === 'string') {
+      value = value.trim();
+      if (value && !isNaN(Number(value))) return Number(value);
+    }
+    return defaultValue;
   }
 }
 

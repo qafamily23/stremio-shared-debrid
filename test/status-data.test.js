@@ -212,21 +212,21 @@ describe('StatusData Class', () => {
       expect(statusData.endedAt.getTime()).toBe(expectedEndedAt);
     });
 
-    it('should round down fractional sessionMinutes', () => {
+    it('should handle fractional sessionMinutes without rounding', () => {
       const startedAt = new Date("2024-01-01T10:00:00Z");
       statusData.accessFor(120.3, startedAt);
 
-      // 120.3 should be rounded to 120
-      const expectedEndedAt = startedAt.getTime() + 120 * 60 * 1000;
+      // 120.3 is used as-is (no rounding)
+      const expectedEndedAt = startedAt.getTime() + 120.3 * 60 * 1000;
       expect(statusData.endedAt.getTime()).toBe(expectedEndedAt);
     });
 
-    it('should round up fractional sessionMinutes', () => {
+    it('should handle fractional sessionMinutes without rounding', () => {
       const startedAt = new Date("2024-01-01T10:00:00Z");
       statusData.accessFor(120.7, startedAt);
 
-      // 120.7 should be rounded to 121
-      const expectedEndedAt = startedAt.getTime() + 121 * 60 * 1000;
+      // 120.7 is used as-is (no rounding)
+      const expectedEndedAt = startedAt.getTime() + 120.7 * 60 * 1000;
       expect(statusData.endedAt.getTime()).toBe(expectedEndedAt);
     });
 
@@ -265,21 +265,21 @@ describe('StatusData Class', () => {
       expect(statusData.endedAt.getTime()).toBe(expectedEndedAt);
     });
 
-    it('should handle float sessionMinutes with .5 rounding up', () => {
+    it('should handle float sessionMinutes with .5', () => {
       const startedAt = new Date("2024-01-01T10:00:00Z");
       statusData.accessFor(90.5, startedAt);
 
-      // 90.5 should be rounded to 91
-      const expectedEndedAt = startedAt.getTime() + 91 * 60 * 1000;
+      // 90.5 is used as-is (no rounding)
+      const expectedEndedAt = startedAt.getTime() + 90.5 * 60 * 1000;
       expect(statusData.endedAt.getTime()).toBe(expectedEndedAt);
     });
 
-    it('should handle string numeric sessionMinutes as invalid', () => {
+    it('should handle string numeric sessionMinutes as valid', () => {
       const startedAt = new Date("2024-01-01T10:00:00Z");
       statusData.accessFor('120', startedAt);
 
-      // String numeric should be treated as invalid, use default
-      const expectedEndedAt = startedAt.getTime() + 180 * 60 * 1000;
+      // String numeric is converted to number
+      const expectedEndedAt = startedAt.getTime() + 120 * 60 * 1000;
       expect(statusData.endedAt.getTime()).toBe(expectedEndedAt);
     });
 
