@@ -1,10 +1,11 @@
 const DEFAULT_SESSION_MINUTES = 180;
 
 class StatusData {
-  constructor(username = 'Grandma', accessedAt = undefined, sessionMinutes = undefined) {
-    this.username       = username;
-    this.accessedAt     = accessedAt instanceof Date ? accessedAt : new Date(accessedAt ?? '1970-01-01');
+  constructor(username = undefined, accessedAt = undefined, sessionMinutes = undefined) {
+    this.username       = username ?? 'Grandma';
     this.sessionMinutes = typeof sessionMinutes == 'number' ? Math.max(0, Math.round(sessionMinutes)) : DEFAULT_SESSION_MINUTES;
+    this.accessedAt     = new Date(accessedAt);
+    if (isNaN(this.accessedAt.valueOf())) this.accessedAt = new Date('1970-01-01');
   }
 
   canAccess(username) {

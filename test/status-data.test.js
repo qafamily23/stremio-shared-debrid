@@ -61,7 +61,7 @@ describe('StatusData Class', () => {
 
     it('should use null username when explicitly provided', () => {
       const statusData = new StatusData(null);
-      expect(statusData.username).toBe(null);
+      expect(statusData.username).toBe('Grandma');
     });
 
     it('should use undefined username when explicitly provided', () => {
