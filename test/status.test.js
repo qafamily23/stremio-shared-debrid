@@ -23,7 +23,6 @@ describe('Status Class', () => {
       username: 'grandma',
       accessedAt: new Date('1970-01-01'),
       endedAt: new Date('1970-01-01'),
-      accessNow: jest.fn().mockReturnThis(),
       accessFor: jest.fn().mockImplementation(function(sessionMinutes) {
         // Simulate the accessFor behavior: update endedAt based on sessionMinutes
         const minutes = typeof sessionMinutes === 'number' ? sessionMinutes : 180; // DEFAULT_SESSION_MINUTES
@@ -77,7 +76,6 @@ describe('Status Class', () => {
         username: 'test-user',
         accessedAt: new Date('2023-01-01T00:00:00Z'),
         endedAt: new Date('2023-01-01T03:00:00Z'), // Default 180 minutes after accessedAt
-        accessNow: jest.fn().mockReturnThis(),
         accessFor: jest.fn().mockReturnThis(),
         toObject: jest.fn().mockReturnValue(mockJsonData)
       };

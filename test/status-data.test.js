@@ -165,43 +165,6 @@ describe('StatusData Class', () => {
     });
   });
 
-  describe('accessNow method', () => {
-    beforeEach(() => {
-      statusData = new StatusData({username: 'test-user', accessedAt: '2023-01-01T00:00:00Z'});
-    });
-
-    it('should update accessedAt to current date', () => {
-      const beforeRefresh = new Date();
-      statusData.accessNow();
-      const afterRefresh = new Date();
-
-      expect(statusData.accessedAt).toBeInstanceOf(Date);
-      expect(statusData.accessedAt.getTime()).toBeGreaterThanOrEqual(beforeRefresh.getTime());
-      expect(statusData.accessedAt.getTime()).toBeLessThanOrEqual(afterRefresh.getTime());
-    });
-
-    it('should keep username unchanged when accessing now', () => {
-      const originalUsername = statusData.username;
-      statusData.accessNow();
-
-      expect(statusData.username).toBe(originalUsername);
-    });
-
-    it('should work multiple times in succession', () => {
-      const firstRefresh = new Date();
-      statusData.accessNow();
-
-      // Wait a small amount to ensure different timestamps
-      setTimeout(() => {
-        const secondRefresh = new Date();
-        statusData.accessNow();
-
-        expect(statusData.accessedAt.getTime()).toBeGreaterThan(firstRefresh.getTime());
-        expect(statusData.accessedAt.getTime()).toBeGreaterThanOrEqual(secondRefresh.getTime());
-      }, 1);
-    });
-  });
-
   describe('toObject method', () => {
     beforeEach(() => {
       statusData = new StatusData({username: 'test-user', accessedAt: '2023-01-15T10:30:00Z'});
@@ -235,22 +198,7 @@ describe('StatusData Class', () => {
       expect(statusData.endedAt).toBeInstanceOf(Date);
     });
 
-    it('should work correctly after accessNow is called', () => {
-      const beforeRefresh = new Date();
-      statusData.accessNow();
-      const afterRefresh = new Date();
-
-      const result = statusData.toObject();
-
-      expect(result.username).toBe('test-user');
-      expect(result.accessedAt).toBe(statusData.accessedAt.toISOString());
-
-      // Check that the timestamp is recent
-      const resultDate = new Date(result.accessedAt);
-      expect(resultDate.getTime()).toBeGreaterThanOrEqual(beforeRefresh.getTime());
-      expect(resultDate.getTime()).toBeLessThanOrEqual(afterRefresh.getTime());
-    });
-
+    
     it('should work with default accessedAt date', () => {
       const defaultStatusData = new StatusData({username: 'default-user'});
       const result = defaultStatusData.toObject();
@@ -570,29 +518,7 @@ describe('StatusData Class', () => {
       expect(statusData.canAccess(false, new Date('2024-01-01T14:00:00Z'))).toBe(true);
     });
 
-    it('should work correctly after accessNow is called', () => {
-      // Create a StatusData with only endedAt (no accessedAt)
-      const statusData = new StatusData({
-        username: 'original-user',
-        endedAt: '2024-01-01T10:00:00Z'
-      });
-
-      // Verify endedAt is set correctly
-      expect(statusData.endedAt.toISOString()).toBe('2024-01-01T10:00:00.000Z');
-
-      // Check access at 09:00 (before endedAt)
-      expect(statusData.canAccess('different-user', new Date('2024-01-01T09:00:00Z'))).toBe(false);
-
-      // Check access at 11:00 (after endedAt)
-      expect(statusData.canAccess('different-user', new Date('2024-01-01T11:00:00Z'))).toBe(true);
-
-      // Refresh accessedAt (this doesn't affect endedAt)
-      statusData.accessNow();
-
-      // Session should still be expired for the same timestamp
-      expect(statusData.canAccess('different-user', new Date('2024-01-01T11:00:00Z'))).toBe(true);
-    });
-
+    
     it('should handle zero session minutes', () => {
       // sessionMinutes is ignored, endedAt is calculated using DEFAULT_SESSION_MINUTES
       const statusData = new StatusData({
@@ -708,10 +634,10 @@ describe('StatusData Class', () => {
       // Check access at 14:00 (expired)
       expect(statusData.canAccess('other-user', new Date('2024-01-01T14:00:00Z'))).toBe(true);
 
-      // Access now (updates accessedAt but not endedAt)
-      statusData.accessNow();
+      // Update using accessFor to simulate refresh with default session time
+      statusData.accessFor(undefined, new Date('2024-01-01T11:00:00Z'));
 
-      // After refresh - endedAt hasn't changed
+      // After refresh - endedAt has been updated to 14:00 (11:00 + 180 minutes)
       expect(statusData.canAccess('lifecycle-user', new Date('2024-01-01T12:00:00Z'))).toBe(true);
       expect(statusData.canAccess('other-user', new Date('2024-01-01T12:00:00Z'))).toBe(false);
 

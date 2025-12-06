@@ -24,10 +24,6 @@ class StatusData {
     this.endedAt   = new Date(startedAt.getTime() + sessionMinutes * 60 * 1000);
   }
 
-  accessNow() {
-    this.accessedAt = new Date();
-  }
-
   toObject() {
     return {
       username: this.username,
