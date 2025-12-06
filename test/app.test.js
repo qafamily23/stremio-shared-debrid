@@ -104,7 +104,7 @@ describe('Express Server', () => {
       expect(response.body).toEqual({
         streams: [{
           name: 'Shared Debrid',
-          description: 'DANGER! anotheruser is accessing!',
+          description: 'DANGER! anotheruser is watching!',
           ytId: 'abm8QCh7pBg'
         }]
       });
@@ -123,7 +123,7 @@ describe('Express Server', () => {
       expect(response.body).toEqual({
         streams: [{
           name: 'Shared Debrid',
-          description: 'DANGER! anotheruser is accessing!',
+          description: 'DANGER! anotheruser is watching!',
           ytId: 'abm8QCh7pBg'
         }]
       });
@@ -251,7 +251,7 @@ describe('Express Server', () => {
       expect(response.body).toEqual({
         streams: [{
           name: 'Shared Debrid',
-          description: 'DANGER! undefined is accessing!',
+          description: 'DANGER! undefined is watching!',
           ytId: 'abm8QCh7pBg'
         }]
       });
@@ -270,7 +270,7 @@ describe('Express Server', () => {
       expect(response.body).toEqual({
         streams: [{
           name: 'Shared Debrid',
-          description: 'DANGER! undefined is accessing!',
+          description: 'DANGER! undefined is watching!',
           ytId: 'abm8QCh7pBg'
         }]
       });

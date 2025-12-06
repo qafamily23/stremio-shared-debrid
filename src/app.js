@@ -41,7 +41,7 @@ app.get('/:authToken/:gistId/:username{/:sessionMinutes}/stream/:type/:id.json',
     } else {
       respond(res, { streams: [{
         name:        'Shared Debrid',
-        description: `DANGER! ${statusData?.username} is accessing!`,
+        description: `DANGER! ${statusData?.username} is watching!`,
         ytId :       'abm8QCh7pBg' // BTS - Danger
       }] });
     }
