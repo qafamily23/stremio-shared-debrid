@@ -4,8 +4,7 @@ class StatusData {
   constructor({username, accessedAt, sessionMinutes}) {
     this.username       = username ?? 'Grandma';
     this.sessionMinutes = typeof sessionMinutes == 'number' ? Math.max(0, Math.round(sessionMinutes)) : DEFAULT_SESSION_MINUTES;
-    this.accessedAt     = new Date(accessedAt);
-    if (isNaN(this.accessedAt.valueOf())) this.accessedAt = new Date('1970-01-01');
+    this.accessedAt     = this._parseDate(accessedAt);
   }
 
   canAccess(username) {
@@ -21,9 +20,14 @@ class StatusData {
 
   toObject() {
     return {
-      username:   this.username,
-      accessedAt: this.accessedAt.toISOString(),
+      username: this.username,
+      accessedAt: this.accessedAt?.toISOString(),
     }
+  }
+
+  _parseDate(timestamp, defaultValue = '1970-01-01') {
+    const date = new Date(timestamp);
+    return isNaN(date.valueOf()) ? new Date(defaultValue) : date;
   }
 }
 
