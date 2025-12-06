@@ -1,17 +1,22 @@
 const DEFAULT_SESSION_MINUTES = 180;
 
 class StatusData {
-  constructor({username, accessedAt, sessionMinutes}) {
+  constructor({username, endedAt, accessedAt, sessionMinutes}) {
     this.username       = username ?? 'Grandma';
     this.sessionMinutes = typeof sessionMinutes == 'number' ? Math.max(0, Math.round(sessionMinutes)) : DEFAULT_SESSION_MINUTES;
     this.accessedAt     = this._parseDate(accessedAt);
+
+    if (accessedAt) {
+      const accessTimestamp = this._parseDate(accessedAt);
+      this.endedAt = new Date(accessTimestamp.getTime() + DEFAULT_SESSION_MINUTES * 60 * 1000);
+    } else {
+      this.endedAt = this._parseDate(endedAt);
+    }
   }
 
   canAccess(username) {
     if (username === this.username) return true;
-    const expiryEpoch = this.accessedAt.getTime() + this.sessionMinutes * 60 * 1000;
-    const nowEpoch    = new Date().getTime();
-    return expiryEpoch < nowEpoch;
+    return this.endedAt < new Date();
   }
 
   accessNow() {
@@ -21,6 +26,7 @@ class StatusData {
   toObject() {
     return {
       username: this.username,
+      endedAt:  this.endedAt.toISOString(),
       accessedAt: this.accessedAt?.toISOString(),
     }
   }
