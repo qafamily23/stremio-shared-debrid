@@ -14,9 +14,9 @@ class StatusData {
     }
   }
 
-  canAccess(username) {
+  canAccess(username, timestamp = new Date()) {
     if (username === this.username) return true;
-    return this.endedAt < new Date();
+    return this.endedAt < timestamp;
   }
 
   accessNow() {
